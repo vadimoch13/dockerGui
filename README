@@ -1,0 +1,22 @@
+# Docker GUI
+
+Web interface for docker management. Provides statistics for each container, pull and push containers, commits, mount directories, port forwarding, and more.
+
+
+
+### Installing
+
+```
+git clone https://github.com/vadimoch13/dockerGui.git
+cd ./dockerGui
+go build
+```
+
+### Usage
+dockerGui --listen localhost:3000 --auth-login admin --auth-password admin
+Open web-browser and go to http://localhost:3000/index
+
+## License
+
+This project is licensed under the Apache License 2.0 - see the [LICENSE] file for details
+
