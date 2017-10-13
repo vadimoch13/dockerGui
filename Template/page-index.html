@@ -1,0 +1,108 @@
+{{define "body"}}
+<div class="container">
+
+    <div class="row">
+        <div class="panel panel-info">
+            <div class="panel-heading">
+               General Info
+            </div>
+            <div class="panel-body">
+
+
+                <div class="row">
+                    <div class="col-md-3">
+                        <b>Docker Host: <br /><FONT color="green">unix://var/run/docker.sock</FONT></b>
+                    </div>
+                    <div class="col-md-3">
+                        <b>Docker Version: <br /><FONT color="green">{{ .DockerVersion}}</FONT></b>
+                    </div>
+                    <div class="col-md-3">
+                        <b>Hostname: <br /><FONT color="green">{{ .Hostname }}</FONT></b>
+                    </div>
+                    <div class="col-md-3">
+                        <b>Swarm: <br /><FONT color="green">{{ .Swarm}}</FONT></b>
+                    </div>
+                </div>
+                <br />
+                <div class="row">
+                    <div class="col-md-3">
+                        <b>... ...: <br /><FONT color="green">...</FONT></b>
+                    </div>
+                    <div class="col-md-3">
+                        <b>APIVersion: <br /><FONT color="green">{{ .ApiVersion}}</FONT></b>
+                    </div>
+                    <div class="col-md-3">
+                        <b>CPU: <br /><FONT color="green">{{ .CPU }}</FONT></b>
+                    </div>
+                    <div class="col-md-3">
+                    </div>
+                </div>
+                <br />
+                <div class="row">
+                    <div class="col-md-3">
+                        <b>... ...: <br /><FONT color="green">false</FONT></b>
+                    </div>
+                    <div class="col-md-3">
+                        <b>OS/Arch/Kernel: <br /><FONT color="green">{{ .OS}} / <i><u> {{ .Arch}} </u></i> / {{ .Kernel}}</FONT></b>
+                    </div>
+                    <div class="col-md-3">
+                        <b>Memory: <br /><FONT color="green">{{ .Memory }} Mb</FONT></b>
+                    </div>
+                    <div class="col-md-3">
+                    </div>
+                </div>
+            </div>
+            <div class="panel-footer">
+                Last update: 1 sec ago
+            </div>
+        </div>
+    </div>
+
+
+    <div class="row">
+        <div class="panel panel-default">
+
+            <div class="panel-heading">
+                Context Classes
+            </div>
+
+            <div class="panel-body">
+                <div class="table-responsive">
+                    <table class="table">
+                        <thead>
+                        <tr>
+                            <th>CONTAINER</th>
+                            <th>NAME</th>
+                            <th>CPU</th>
+                            <th>MEM USAGE (%)</th>
+                            <th>NET (RX/TX)</th>
+                            <th>BLOCK (I/O)</th>
+                            <th>PIDS</th>
+                            <th>UPTIME</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+
+                        {{ range $key, $value := .ListContainer }}
+                        <tr class="{{ if (eq $value.PIDs "0") }} danger {{ else }} success {{ end }}">
+                            <td>{{ $value.ContainerId }}</td>
+                            <td>{{ $value.ContainerName }}</td>
+                            <td>{{ $value.CPUPerc }}</td>
+                            <td>{{ $value.MemUsage }} ( {{ $value.MemPerc }} )</td>
+                            <td>{{ $value.NetIO }}</td>
+                            <td>{{ $value.BlockIO }}</td>
+                            <td>{{ $value.PIDs }}</td>
+                            <td> ??? </td>
+                        </tr>
+                        {{ end }}
+
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+{{end}}
