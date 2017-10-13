@@ -49,7 +49,6 @@ func (d *DockerInfo) GetDetailedInfo(){
 }
 
 func (d *DockerInfo) getTop(){
- 	// docker stats -all --no-stream --format "{{json .}}"
 	cmd := exec.Command("docker", "stats", "-a", "--no-stream", "--format", "{{json .}}")
 	output, err := cmd.CombinedOutput()
 	if err != nil{
