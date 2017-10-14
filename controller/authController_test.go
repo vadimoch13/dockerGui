@@ -7,6 +7,18 @@ import (
 	"io/ioutil"
 )
 
+func TestIsAdmin(t *testing.T) {
+	handler := func(w http.ResponseWriter, r *http.Request) {
+		err := IsAdmin(w, r)
+		if err == nil{
+			t.Fatal("UPS!! I am admin, but i not have admin cookies!!1")
+		}
+	}
+	server := httptest.NewServer(http.HandlerFunc(handler))
+	defer server.Close()
+	http.Get(server.URL)
+}
+
 func TestLogout(t *testing.T) {
 	handler := func(w http.ResponseWriter, r *http.Request) {
 		Logout(w, r)
