@@ -6,6 +6,7 @@ import (
 	"log"
 	"bytes"
 	"strings"
+	"strconv"
 )
 
 type Swarm struct {
@@ -30,6 +31,7 @@ type DockerInfo struct {
 	Hostname string
 	CPU int					`json:"NCPU"`
 	Memory int				`json:"MemTotal"`
+	MemoryStr string
 	Kernel string			`json:"KernelVersion"`
 	OS string				`json:"OperatingSystem"`
 	Arch string				`json:"Architecture"`
@@ -74,7 +76,7 @@ func (d *DockerInfo) getTop(){
 }
 
 func (d *DockerInfo) getHostname(){
-	output, err := exeCmd("hostname -s", "")
+	output, err := ExeCmd("hostname -s", "")
 	if err != nil{
 		log.Println(err)
 		d.Hostname = "N/A"
@@ -84,7 +86,7 @@ func (d *DockerInfo) getHostname(){
 }
 
 func (d *DockerInfo) getDockerInfo(){
-	output, err := exeCmd("docker info -f", `{{json .}}`)
+	output, err := ExeCmd("docker info -f", `{{json .}}`)
 	if err != nil{
 		log.Println(err)
 		return
@@ -94,10 +96,19 @@ func (d *DockerInfo) getDockerInfo(){
 		panic(err)
 	}
 	d.Memory = d.Memory / 1024
+	d.MemoryStr = strconv.Itoa(d.Memory) + " Kb"
+	if d.Memory > 1024{
+		d.Memory = d.Memory / 1024
+		d.MemoryStr = strconv.Itoa(d.Memory) + " Mb"
+	}
+	if d.Memory > 1024{
+		d.Memory = d.Memory / 1024
+		d.MemoryStr = strconv.Itoa(d.Memory) + " Gb"
+	}
 }
 
 func (d *DockerInfo) getDockerVersion(){
-	output, err := exeCmd("docker version -f", `{{json .Server}}`)
+	output, err := ExeCmd("docker version -f", `{{json .Server}}`)
 	if err != nil{
 		log.Println(err)
 		return
@@ -108,7 +119,7 @@ func (d *DockerInfo) getDockerVersion(){
 
 }
 
-func exeCmd(cmd, noSplitArgs string) ([]byte, error){
+func ExeCmd(cmd, noSplitArgs string) ([]byte, error){
 	parts := strings.Split(cmd, " ")
 	head := parts[0]
 	parts = parts[1:]
