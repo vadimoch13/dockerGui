@@ -9,14 +9,15 @@ import (
 type pageIndex struct {
 	Title string
 	*model.DockerInfo
+	// model.Info
 }
 
 func Index(w http.ResponseWriter, r *http.Request){
+	var info model.Info
+	info = &model.DockerInfo{}
+	info.GetGeneralInfo()
 
-	modelDockerInfo := &model.DockerInfo{}
-	modelDockerInfo.GetGeneralInfo()
-	modelDockerInfo.GetDetailedInfo()
-	page := &pageIndex{"Main", modelDockerInfo}
+	page := &pageIndex{"Main", &model.GeneralInfo}
 
 	w.Header().Set("Content-type", "text/html")
 	htmlFiles := []string{"./Template/page.html", "./Template/menu.html", "./Template/navbar-top.html", "./Template/page-index.html"}

@@ -2,10 +2,10 @@ package model
 
 import (
 	"os/exec"
-	"fmt"
 	"encoding/json"
 	"log"
 	"bytes"
+	"strings"
 )
 
 type Swarm struct {
@@ -38,14 +38,17 @@ type DockerInfo struct {
 	ListContainer	[]DockerInfoDetailed
 }
 
-func (d *DockerInfo) GetGeneralInfo(){
-	d.getDockerInfo()
-	d.getDockerVersion()
-	d.getHostname()
+var GeneralInfo DockerInfo
+
+type Info interface {
+	GetGeneralInfo()
 }
 
-func (d *DockerInfo) GetDetailedInfo(){
-	d.getTop()
+func (d *DockerInfo) GetGeneralInfo(){
+	GeneralInfo.getDockerVersion()
+	GeneralInfo.getDockerInfo()
+	GeneralInfo.getHostname()
+	GeneralInfo.getTop()
 }
 
 func (d *DockerInfo) getTop(){
@@ -56,7 +59,7 @@ func (d *DockerInfo) getTop(){
 		return
 	}
 	row := bytes.Split(output, []byte("\n"))
-
+	d.ListContainer = nil	// truncate after reload page
 	for _, a := range row{
 		if string(a) == ""{
 			break
@@ -71,20 +74,20 @@ func (d *DockerInfo) getTop(){
 }
 
 func (d *DockerInfo) getHostname(){
-	cmd := exec.Command("hostname", )
-	output, err := cmd.CombinedOutput()
+	output, err := exeCmd("hostname -s", "")
 	if err != nil{
-		fmt.Println(err)
+		log.Println(err)
 		d.Hostname = "N/A"
+		return
 	}
 	d.Hostname = string(output)
 }
 
 func (d *DockerInfo) getDockerInfo(){
-	cmd := exec.Command("docker", "info", "-f", "{{json .}}")
-	output, err := cmd.Output()
+	output, err := exeCmd("docker info -f", `{{json .}}`)
 	if err != nil{
-		fmt.Println(err)
+		log.Println(err)
+		return
 	}
 
 	if err := json.Unmarshal(output, &d); err != nil {
@@ -94,10 +97,25 @@ func (d *DockerInfo) getDockerInfo(){
 }
 
 func (d *DockerInfo) getDockerVersion(){
-	cmd := exec.Command("docker", "version", "-f", "{{json .Server}}")
-	output, _ := cmd.CombinedOutput()
+	output, err := exeCmd("docker version -f", `{{json .Server}}`)
+	if err != nil{
+		log.Println(err)
+		return
+	}
 	if err := json.Unmarshal(output, &d); err != nil {
 		panic(err)
 	}
+
+}
+
+func exeCmd(cmd, noSplitArgs string) ([]byte, error){
+	parts := strings.Split(cmd, " ")
+	head := parts[0]
+	parts = parts[1:]
+	if noSplitArgs != ""{
+		parts = append(parts, noSplitArgs)
+	}
+	out, err := exec.Command(head, parts...).Output()
+	return out, err
 
 }
