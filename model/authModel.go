@@ -35,7 +35,8 @@ func CheckAuth(w http.ResponseWriter, r *http.Request) error{
 	return nil
 }
 
-func Logout(w http.ResponseWriter, r *http.Request){
+func Logout(w http.ResponseWriter, r *http.Request) error{
 	cookie := http.Cookie{Name: "auth", Value: ""}
 	http.SetCookie(w, &cookie)
+	return nil
 }

@@ -4,8 +4,6 @@ import (
 	"testing"
 )
 
-
-
 func TestExeCmd(t *testing.T) {
 	type InputExeCmd struct {
 		command string
