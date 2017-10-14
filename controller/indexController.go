@@ -14,7 +14,7 @@ type pageIndex struct {
 
 func Index(w http.ResponseWriter, r *http.Request){
 	var info model.Info
-	info = &model.DockerInfo{}
+	info = model.Info(&model.GeneralInfo)
 	info.GetGeneralInfo()
 
 	page := &pageIndex{"Main", &model.GeneralInfo}
